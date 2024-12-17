@@ -1,21 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"toko_kucing/database"
-	"toko_kucing/types"
-	"toko_kucing/view"
+	database "tri_darma/database"
+	types "tri_darma/types"
+	view "tri_darma/view"
 )
 
 func main() {
-	var saveUserLogin types.User
 	database.InitDb()
-	view.MainMenu(&saveUserLogin)
-	switch saveUserLogin.Role {
-	case "admin":
-		view.AdminMenu(saveUserLogin)
+	var setDataTriDarma types.TriDarma
+	view.MainMenu(&setDataTriDarma)
+	if setDataTriDarma.Id != 0 {
+		view.PenelitianMenu(&setDataTriDarma)
 		main()
-	case "user":
-		fmt.Print("role user approved")
 	}
 }

@@ -5,10 +5,10 @@ import "path/filepath"
 const (
 	PATH_DATA        = "data"
 	PATH_DB          = "db"
-	DB_USERS_FILE    = "user.json"
-	DB_ORDERS_FILE   = "order.json"
-	DB_PRODUCTS_FILE = "products.json"
-	DB_CATEGORY_FILE = "category.json"
+	DB_PENELITIAN    = "penelitian.json"
+	DB_ANGGOTA       = "anggota.json"
+	DB_PRODUCTS_FILE = "keluaran.json"
+	DB_DANA_FILE     = "sumberdana.json"
 )
 
 func FullPathDB(file string) string {

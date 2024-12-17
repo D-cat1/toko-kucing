@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"toko_kucing/constants"
-	"toko_kucing/types"
+	constants "tri_darma/constants"
+	types "tri_darma/types"
 )
 
 type ConstarintData interface {
-	types.DataCategory | types.DataDBInit | types.DataProduct | types.DataUser
+	types.DataAnggota | types.DataDBInit | types.DataDana | types.DataLuaran | types.DataTriDarma
 }
 
 func initFolder() {
-	paths := []string{constants.PATH_DATA, filepath.Join(constants.PATH_DATA, constants.PATH_DB)}
+	paths := [2]string{constants.PATH_DATA, filepath.Join(constants.PATH_DATA, constants.PATH_DB)}
 	for _, path := range paths {
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			os.Mkdir(path, os.ModePerm)
@@ -39,13 +39,8 @@ func WriteJSON[V ConstarintData](path string, dataUser V) {
 
 func initFileDBIfNotExist() {
 	var rootDBPath string = filepath.Join(constants.PATH_DATA, constants.PATH_DB)
-	paths := []string{
-		constants.DB_USERS_FILE,
-		constants.DB_PRODUCTS_FILE,
-		constants.DB_ORDERS_FILE,
-		constants.DB_CATEGORY_FILE,
-	}
-	var dataDummy = types.DataDBInit{LastId: 0, Length: 0, Data: make([]int, 0)}
+	paths := [4]string{constants.DB_ANGGOTA, constants.DB_DANA_FILE, constants.DB_PENELITIAN, constants.DB_PRODUCTS_FILE}
+	var dataDummy = types.DataDBInit{LastId: 0, Length: 0, Data: [0]string{}}
 	for _, path := range paths {
 		if _, err := os.Stat(filepath.Join(rootDBPath, path)); os.IsNotExist(err) {
 			WriteJSON(filepath.Join(rootDBPath, path), dataDummy)

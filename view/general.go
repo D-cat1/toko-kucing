@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func HandleLongInput(text *string) {
@@ -35,4 +36,8 @@ func border(typeBound string, text string, length int) string {
 		merger += typeBound
 	}
 	return merger
+}
+
+func delay(sec int) {
+	time.Sleep(time.Duration(sec) * time.Second)
 }
