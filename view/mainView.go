@@ -7,6 +7,16 @@ import (
 	"tri_darma/types"
 )
 
+func inputRegTriDarma(data *types.TriDarma, data_type string) {
+	Clrscr()
+	fmt.Printf(border("-", "Detail %v", 50)+"\n", data_type)
+	fmt.Printf("Judul %v : ", data_type)
+	HandleLongInput(&data.Nama)
+	data.Tipe = data_type
+	fmt.Printf("Tahun %v : ", data_type)
+	fmt.Scan(&data.Tahun)
+}
+
 func handleRegister(state *types.TriDarma) {
 	var choice int
 	var dataTriDarma types.TriDarma
@@ -21,21 +31,9 @@ func handleRegister(state *types.TriDarma) {
 
 	switch choice {
 	case 1:
-		Clrscr()
-		fmt.Println(border("-", "Detail Penelitian", 50))
-		fmt.Print("Judul Penelitian : ")
-		HandleLongInput(&dataTriDarma.Nama)
-		dataTriDarma.Tipe = "Penelitian"
-		fmt.Print("Tahun Pelaksanaan: ")
-		fmt.Scan(&dataTriDarma.Tahun)
+		inputRegTriDarma(&dataTriDarma, "Penelitian")
 	case 2:
-		Clrscr()
-		fmt.Println(border("-", "Detail Abdimas", 50))
-		fmt.Print("Judul Abdimas : ")
-		HandleLongInput(&dataTriDarma.Nama)
-		dataTriDarma.Tipe = "Abdimas"
-		fmt.Print("Tahun Pelaksanaan: ")
-		fmt.Scan(&dataTriDarma.Tahun)
+		inputRegTriDarma(&dataTriDarma, "Abdimas")
 	case 3:
 		return
 	default:
@@ -87,8 +85,15 @@ func MainMenu(managedState *types.TriDarma) {
 			handleRegister(managedState)
 			return
 		case 2:
-			HandleManagemen(managedState)
-			return
+			if services.ListTridar().Length < 1 {
+				fmt.Println("Data Tri Darma masih kosong!")
+				time.Sleep(1 * time.Second)
+				fmt.Println("Kembali ke menu awal...")
+				time.Sleep(2 * time.Second)
+			} else {
+				HandleManagemen(managedState)
+				return
+			}
 		case 3:
 			fmt.Println("babay!")
 			return

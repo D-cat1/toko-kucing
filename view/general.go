@@ -9,7 +9,9 @@ import (
 )
 
 func HandleLongInput(text *string) {
+	fmt.Scanln() // discard previous `\n` before reading new data (main cause: `fmt.scan()`)
 	reader := bufio.NewReader(os.Stdin)
+	// reader.Discard(reader.Buffered()) // discard previous `\n` before reading new data (main cause: `fmt.scan()`)
 	dataInput, _ := reader.ReadString('\n')
 	*text = strings.TrimSpace(dataInput)
 }
