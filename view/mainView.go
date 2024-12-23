@@ -77,7 +77,7 @@ func MainMenu(managedState *types.TriDarma) {
 		fmt.Println("3. Exit")
 		fmt.Println(border("-", "", 50))
 		fmt.Print("Pilih : ")
-		fmt.Scanln(&choice)
+		fmt.Scan(&choice)
 
 		switch choice {
 		case 1:
