@@ -2,7 +2,6 @@ package view
 
 import (
 	"fmt"
-	"time"
 	"tri_darma/services"
 	"tri_darma/types"
 )
@@ -22,10 +21,10 @@ func handleRegister(state *types.TriDarma) {
 	var dataTriDarma types.TriDarma
 	Clrscr()
 	fmt.Println(border("-", "Register", 50))
-	fmt.Println("Pilih Tipe")
 	fmt.Println("1. Penelitian")
 	fmt.Println("2. Abdimas")
 	fmt.Println("3. Exit")
+	fmt.Println(border("-", "", 50))
 	fmt.Print("Pilih : ")
 	fmt.Scan(&choice)
 
@@ -38,7 +37,7 @@ func handleRegister(state *types.TriDarma) {
 		return
 	default:
 		fmt.Println("Opsi tidak tersedia")
-		time.Sleep(1 * time.Second)
+		delay(1)
 		return
 	}
 
@@ -55,13 +54,13 @@ func HandleManagemen(dataTriSaved *types.TriDarma) {
 	fmt.Println(border("-", "Pilih Judul Penelitian", 50))
 	for i := 0; i < lastidx.Length; i++ {
 
-		fmt.Println(i+1, ". ", lastidx.Data[i].Nama)
+		fmt.Printf("%v. %v\n", i+1, lastidx.Data[i].Nama)
 	}
 	fmt.Println(border("-", "", 50))
 
 	for choice > lastidx.Length || choice == 0 {
 		fmt.Print("Pilih : ")
-		fmt.Scan(&choice)
+		fmt.Scanln(&choice)
 		fmt.Println("Inputan Salah! ulangi")
 	}
 	*dataTriSaved = lastidx.Data[choice-1]
@@ -78,7 +77,7 @@ func MainMenu(managedState *types.TriDarma) {
 		fmt.Println("3. Exit")
 		fmt.Println(border("-", "", 50))
 		fmt.Print("Pilih : ")
-		fmt.Scan(&choice)
+		fmt.Scanln(&choice)
 
 		switch choice {
 		case 1:
@@ -87,9 +86,9 @@ func MainMenu(managedState *types.TriDarma) {
 		case 2:
 			if services.ListTridar().Length < 1 {
 				fmt.Println("Data Tri Darma masih kosong!")
-				time.Sleep(1 * time.Second)
+				delay(1)
 				fmt.Println("Kembali ke menu awal...")
-				time.Sleep(2 * time.Second)
+				delay(2)
 			} else {
 				HandleManagemen(managedState)
 				return
@@ -99,7 +98,7 @@ func MainMenu(managedState *types.TriDarma) {
 			return
 		default:
 			fmt.Println("Opsi tidak tersedia")
-			time.Sleep(1 * time.Second)
+			delay(1)
 		}
 	}
 }

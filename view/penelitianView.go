@@ -2,8 +2,12 @@ package view
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 	services "tri_darma/services"
 	types "tri_darma/types"
+
+	tablewriter "github.com/olekukonko/tablewriter"
 )
 
 func choosePeran() string {
@@ -47,11 +51,11 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 			_, user := services.GetTridarById(penelitianManage.Id)
 			*penelitianManage = user
 			fmt.Println(border("-", "Detail "+penelitianManage.Tipe, 50))
-			fmt.Println("Nama : ", penelitianManage.Nama)
-			fmt.Println("Tahun : ", penelitianManage.Tahun)
-			fmt.Println("Banyak Anggota : ", penelitianManage.CountAnggota)
-			fmt.Println("Banyak Luaran : ", penelitianManage.CountLuaran)
-			fmt.Println("Total Pendanaan : ", penelitianManage.SumDana)
+			formatPrint("Nama", penelitianManage.Nama)
+			formatPrint("Tahun", penelitianManage.Tahun)
+			formatPrint("Banyak Anggota", penelitianManage.CountAnggota)
+			formatPrint("Banyak Luaran", penelitianManage.CountLuaran)
+			formatPrint("Total Pendanaan", penelitianManage.SumDana)
 			fmt.Println(border("-", "", 50))
 			fmt.Println("1. Tambah Anggota")
 			fmt.Println("2. Hapus Anggota")
@@ -78,11 +82,10 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 					anggotaTemp.IdTridarma = penelitianManage.Id
 					services.AddAnggota(anggotaTemp)
 					fmt.Println("Data berhasil disimpan, akan dialihkan dalam 2 dtk")
-					delay(2)
 				} else {
 					fmt.Println("Error!, Max. 4 Orang")
-					delay(2)
 				}
+				delay(2)
 			case 2:
 				var sementara [99]int
 				var countTmp int
@@ -120,14 +123,14 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 				Clrscr()
 				fmt.Println(border("-", "Data Anggota", 50))
 				var dataAnggota = services.ListAnggota()
+				table := tablewriter.NewWriter(os.Stdout)
+				table.SetHeader([]string{"No", "Nama", "Role"})
 				for i := 0; i < dataAnggota.Length; i++ {
 					if dataAnggota.Data[i].IdTridarma == penelitianManage.Id {
-						fmt.Println("Nama : ", dataAnggota.Data[i].Nama)
-						fmt.Println("Peran : ", dataAnggota.Data[i].Role)
-						fmt.Println(border("-", "", 50))
-
+						table.Append([]string{strconv.Itoa(i + 1), dataAnggota.Data[i].Nama, dataAnggota.Data[i].Role})
 					}
 				}
+				table.Render()
 
 				fmt.Println("Klik [enter] untuk lanjut")
 				fmt.Scanln()
@@ -135,7 +138,6 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 				Clrscr()
 				var dataPay types.Dana
 				fmt.Println(border("-", "Tambah Pendanaan", 50))
-				fmt.Println("Tipe : ")
 				fmt.Println("1. Internal")
 				fmt.Println("2. External")
 				fmt.Println(border("-", "", 50))
@@ -163,14 +165,15 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 				Clrscr()
 				fmt.Println(border("-", "Data Pendanaan", 50))
 				var dataDana = services.ListDana()
+				table := tablewriter.NewWriter(os.Stdout)
+				table.SetHeader([]string{"No", "Sumber Dana", "Asal Dana", "Nomimal"})
 				for i := 0; i < dataDana.Length; i++ {
 					if dataDana.Data[i].IdTridarma == penelitianManage.Id {
-						fmt.Println("Sumber Dana : ", dataDana.Data[i].Sumber)
-						fmt.Println("Asal Dana : ", dataDana.Data[i].Keterangan)
-						fmt.Println("Nominal : ", dataDana.Data[i].Nominal)
-						fmt.Println(border("-", "", 50))
+						table.Append([]string{strconv.Itoa(i + 1), dataDana.Data[i].Sumber, dataDana.Data[i].Keterangan, strconv.Itoa(dataDana.Data[i].Nominal)})
 					}
 				}
+				table.Render()
+
 				fmt.Println("Klik [enter] untuk lanjut")
 				fmt.Scanln()
 			case 6:
@@ -208,7 +211,6 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 				Clrscr()
 				var tempLuaran types.Luaran
 				fmt.Println(border("-", "Tambah Luaran", 50))
-				fmt.Println("Pilih Tipe Luaran : ")
 				fmt.Println("1. Publikasi")
 				fmt.Println("2. Produk")
 				if penelitianManage.Tipe == "Abdimas" {
@@ -243,11 +245,11 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 				Clrscr()
 				fmt.Println(border("-", "Data Pendanaan", 50))
 				var dataLuaran = services.ListLuaran()
+				table := tablewriter.NewWriter(os.Stdout)
+				table.SetHeader([]string{"No", "Bentuk", "Pelaksanaan (dd/mm/yyyy)"})
 				for i := 0; i < dataLuaran.Length; i++ {
 					if dataLuaran.Data[i].IdTridarma == penelitianManage.Id {
-						fmt.Println("Bentuk : ", dataLuaran.Data[i].BentukLuaran)
-						fmt.Println("Pelaksanaan (dd/mm/yyyy): ", dataLuaran.Data[i].Pelaksanaan)
-						fmt.Println(border("-", "", 50))
+						table.Append([]string{strconv.Itoa(i + 1), dataLuaran.Data[i].BentukLuaran, dataLuaran.Data[i].Pelaksanaan})
 					}
 				}
 				fmt.Println("Klik [enter] untuk lanjut")

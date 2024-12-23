@@ -43,3 +43,7 @@ func border(typeBound string, text string, length int) string {
 func delay(sec int) {
 	time.Sleep(time.Duration(sec) * time.Second)
 }
+
+func formatPrint(param string, value any) {
+	fmt.Printf("%-15s : %v\n", param, value)
+}
