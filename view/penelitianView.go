@@ -439,7 +439,8 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 			_, user := services.GetTridarById(penelitianManage.Id)
 			*penelitianManage = user
 			fmt.Println(border("-", "Detail "+penelitianManage.Tipe, 50))
-			formatPrint("Nama", penelitianManage.Nama)
+			formatPrint("Judul", penelitianManage.Nama)
+			formatPrint("Prodi", penelitianManage.Prodi)
 			formatPrint("Tahun", penelitianManage.Tahun)
 			formatPrint("Banyak Anggota", penelitianManage.CountAnggota)
 			formatPrint("Banyak Luaran", penelitianManage.CountLuaran)
@@ -448,6 +449,8 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 			fmt.Println("1. Manage Anggota")
 			fmt.Println("2. Manage Pendanaan")
 			fmt.Println("3. Manage Luaran")
+			fmt.Println("4. Ubah Detail " + penelitianManage.Tipe)
+			fmt.Println("5. [DANGER] Hapus " + penelitianManage.Tipe + " ini")
 			fmt.Println("0. Exit")
 			fmt.Println(border("-", "", 50))
 			fmt.Print("Pilih : ")
@@ -459,6 +462,31 @@ func PenelitianMenu(penelitianManage *types.TriDarma) {
 				PendanaanMenu(penelitianManage)
 			case 3:
 				LuaranMenu(penelitianManage)
+			case 4:
+				inputRegTriDarma(penelitianManage, penelitianManage.Tipe)
+				services.ChangeTriDarmaById(penelitianManage.Id, *penelitianManage)
+				fmt.Println("Data berhasil diubah. Melanjutkan dalam 2 detik...")
+				delay(2)
+			case 5:
+				Clrscr()
+				fmt.Println(border("-", "Konfirmasi Penghapusan", 50))
+				fmt.Println("Apakah anda yakin untuk menghapus " + penelitianManage.Tipe + " " + penelitianManage.Nama + "?")
+				loop := true
+				for loop {
+					fmt.Print("[1. Ya / 2. Tidak] : ")
+					fmt.Scan(&choice)
+					if choice == 1 {
+						services.RemoveTriDarmaById(penelitianManage.Id)
+						fmt.Println("Data berhasil dihapus. Kembali ke menu awal dalam 2 detik...")
+						delay(2)
+						loop = false
+						return
+					} else if choice == 2 {
+						loop = false
+					} else {
+						fmt.Println("Inputan Salah! ulangi")
+					}
+				}
 			case 0:
 				return
 			default:

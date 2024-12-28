@@ -3,6 +3,7 @@ package types
 type TriDarma struct {
 	Id           int
 	Nama         string
+	Prodi        string
 	Tipe         string
 	CountLuaran  int
 	CountAnggota int

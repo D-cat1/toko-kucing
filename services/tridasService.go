@@ -83,3 +83,8 @@ func GetTridarById(id int) (bool, types.TriDarma) {
 func ListTridar() types.DataTriDarma {
 	return database.ReadJSON[types.DataTriDarma](constants.FullPathDB(constants.DB_PENELITIAN))
 }
+
+// Used for sorting
+func UpdateAll(data types.DataTriDarma) {
+	database.WriteJSON(constants.FullPathDB(constants.DB_PENELITIAN), data)
+}

@@ -7,12 +7,7 @@ import (
 )
 
 /*
-	TODO:
-	1. ui kurang gacor
-	2. belum ada handle buat cancle
-	3. bagian view codenya belum terlalu rapi (buru")
-	4. (ini baru inget) belum ditambahin buat update data di tampilan, kalau di service udah
-	5. kurang penerapan sorting dan binary search
+	TODO: Tidy up
 */
 
 func main() {
