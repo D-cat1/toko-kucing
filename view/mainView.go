@@ -79,16 +79,15 @@ func ShowTriDarma(dataTriSaved *types.TriDarma) int {
 	return 1
 }
 
-func PrintTriDarmaTable(data *[]types.TriDarma) {
-	dataLength := len(*data)
+func PrintTriDarmaTable(data *[100]types.TriDarma, n int) {
 	Clrscr()
 	fmt.Println(border("-", "List Tri Darma", 50))
-	if dataLength < 1 {
+	if n < 1 {
 		fmt.Println("Tidak ada data.")
 	} else {
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"No", "Judul", "Prodi", "Tahun"})
-		for i := 0; i < dataLength; i++ {
+		for i := 0; i < n; i++ {
 			table.Append([]string{strconv.Itoa(i + 1), (*data)[i].Nama, (*data)[i].Prodi, strconv.Itoa((*data)[i].Tahun)})
 		}
 		table.Render()
@@ -106,7 +105,8 @@ func SearchTahun() {
 	fmt.Print("Tahun : ")
 	fmt.Scan(&tahun)
 
-	temp := []types.TriDarma{}
+	temp := [100]types.TriDarma{}
+	n := 0
 
 	found := false
 	left := 0
@@ -115,14 +115,17 @@ func SearchTahun() {
 	for left <= right && !found {
 		mid := (left + right) / 2
 		if triDarma.Data[mid].Tahun == tahun {
-			temp = append(temp, triDarma.Data[mid])
+			temp[0] = triDarma.Data[mid]
+			n++
 			// search after
 			for i := mid + 1; i < triDarma.Length && triDarma.Data[i].Tahun == tahun; i++ {
-				temp = append(temp, triDarma.Data[i])
+				temp[n] = triDarma.Data[i]
+				n++
 			}
 			// search before
 			for i := mid - 1; i >= 0 && triDarma.Data[i].Tahun == tahun; i-- {
-				temp = append(temp, triDarma.Data[i])
+				temp[n] = triDarma.Data[i]
+				n++
 			}
 			found = true
 		} else if triDarma.Data[mid].Tahun > tahun {
@@ -133,51 +136,8 @@ func SearchTahun() {
 		println(left, right, mid, triDarma.Data[mid].Tahun, tahun)
 	}
 	fmt.Scanln()
-	PrintTriDarmaTable(&temp)
+	PrintTriDarmaTable(&temp, n)
 }
-
-// func BinarySearchTahun(triDarma *types.DataTriDarma, tahun int, getFirstIndex bool) int {
-// 	left := 0
-// 	right := triDarma.Length - 1
-// 	for left <= right {
-// 		mid := (left + right) / 2
-// 		if triDarma.Data[mid].Tahun < tahun {
-// 			left = mid + 1
-// 		} else if triDarma.Data[mid].Tahun > tahun {
-// 			right = mid - 1
-// 		} else {
-// 			if getFirstIndex {
-// 				right = mid - 1
-// 			} else {
-// 				left = mid + 1
-// 			}
-// 		}
-// 	}
-// 	return -1
-// }
-
-// func SearchTahun() {
-// 	var tahun int
-// 	triDarma := services.ListTridar()
-// 	Clrscr()
-// 	fmt.Println(border("-", "Cari Tri Darma", 50))
-// 	fmt.Print("Tahun : ")
-// 	fmt.Scan(&tahun)
-
-// 	left, right := BinarySearchTahun(&triDarma, tahun, true), BinarySearchTahun(&triDarma, tahun, false)
-// 	if left == -1 || right == -1 {
-// 		fmt.Println(border("-", "List Tri Darma", 50))
-// 		fmt.Println("Tidak ada data.")
-// 		fmt.Scanln()
-// 		fmt.Println("\nKlik [enter] untuk lanjut")
-// 		fmt.Scanln()
-// 	} else {
-// 		fmt.Scanln()
-// 		temp := triDarma.Data[left : right+1]
-// 		PrintTriDarmaTable(&temp)
-// 	}
-
-// }
 
 func SearchProdi() {
 	var prodi string
@@ -188,28 +148,41 @@ func SearchProdi() {
 	HandleLongInput(&prodi)
 	prodi = strings.ToLower(prodi)
 
-	var temp []types.TriDarma
+	var temp [100]types.TriDarma
+	n := 0
 	for i := 0; i < triDarma.Length; i++ {
 		if strings.ToLower(triDarma.Data[i].Prodi) == prodi {
-			temp = append(temp, triDarma.Data[i])
+			temp[n] = triDarma.Data[i]
+			n++
 		}
 	}
-	PrintTriDarmaTable(&temp)
+	PrintTriDarmaTable(&temp, n)
 }
 
-func InsertionSort() {
+func InsertionSort(descending bool) {
 	data := services.ListTridar()
 	for i := 1; i < data.Length; i++ {
 		temp := data.Data[i]
 		j := i - 1
 		// desc <, asc >
-		for j >= 0 && data.Data[j].Tahun < temp.Tahun {
-			data.Data[j+1] = data.Data[j]
-			j--
+		if descending {
+			for j >= 0 && data.Data[j].Tahun < temp.Tahun {
+				data.Data[j+1] = data.Data[j]
+				j--
+			}
+		} else {
+			for j >= 0 && data.Data[j].Tahun > temp.Tahun {
+				data.Data[j+1] = data.Data[j]
+				j--
+			}
 		}
 		data.Data[j+1] = temp
 	}
 	services.UpdateAll(data)
+	fmt.Scanln()
+	PrintTriDarmaTable(&data.Data, data.Length)
+	fmt.Println("Kembali ke menu...")
+	delay(1)
 }
 
 type YearRank struct {
@@ -217,7 +190,7 @@ type YearRank struct {
 	Count int
 }
 
-func SelectionSort() {
+func SelectionSort(descending bool) {
 	data := services.ListTridar()
 	tahun := [100]YearRank{{data.Data[0].Tahun, 1}}
 	n := 1
@@ -237,13 +210,19 @@ func SelectionSort() {
 	}
 
 	for i := 0; i < n-1; i++ {
-		maxIdx := i
+		idx := i
 		for j := i + 1; j < n; j++ {
-			if tahun[j].Count > tahun[maxIdx].Count {
-				maxIdx = j
+			if descending {
+				if tahun[j].Count > tahun[idx].Count {
+					idx = j
+				}
+			} else {
+				if tahun[j].Count < tahun[idx].Count {
+					idx = j
+				}
 			}
 		}
-		tahun[i], tahun[maxIdx] = tahun[maxIdx], tahun[i]
+		tahun[i], tahun[idx] = tahun[idx], tahun[i]
 	}
 
 	var temp [100]types.TriDarma
@@ -258,6 +237,11 @@ func SelectionSort() {
 	}
 	data.Data = temp
 	services.UpdateAll(data)
+
+	fmt.Scanln()
+	PrintTriDarmaTable(&data.Data, data.Length)
+	fmt.Println("Kembali ke menu...")
+	delay(1)
 }
 
 func HandleManagement(dataTriSaved *types.TriDarma) int {
@@ -266,10 +250,12 @@ func HandleManagement(dataTriSaved *types.TriDarma) int {
 		Clrscr()
 		fmt.Println(border("-", "Manage Tri Darma", 50))
 		fmt.Println("1. List & Detail Tri Darma")
-		fmt.Println("2. Cari Tri Darma (Tahun)") // maybe just one is fine
+		fmt.Println("2. Cari Tri Darma (Tahun)")
 		fmt.Println("3. Cari Tri Darma (Prodi)")
-		fmt.Println("4. Sort by Tahun")
-		fmt.Println("5. Sort by Jumlah Kegiatan Per Tahun")
+		fmt.Println("4. Sort by Tahun (ASC)")
+		fmt.Println("5. Sort by Tahun (DESC)")
+		fmt.Println("6. Sort by Jumlah Kegiatan Per Tahun (ASC)")
+		fmt.Println("7. Sort by Jumlah Kegiatan Per Tahun (DESC)")
 		fmt.Println("0. Exit")
 		fmt.Println(border("-", "", 50))
 		fmt.Print("Pilih : ")
@@ -281,16 +267,18 @@ func HandleManagement(dataTriSaved *types.TriDarma) int {
 				return 1
 			}
 		case 2:
-			InsertionSort()
+			InsertionSort(true)
 			SearchTahun()
 		case 3:
 			SearchProdi()
 		case 4:
-			InsertionSort()
-			fmt.Println("Data tersortir. Kembali ke menu...")
-			delay(1)
+			InsertionSort(false)
 		case 5:
-			SelectionSort()
+			InsertionSort(true)
+		case 6:
+			SelectionSort(false)
+		case 7:
+			SelectionSort(true)
 		case 0:
 			return 0
 		default:
