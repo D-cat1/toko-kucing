@@ -127,6 +127,8 @@ func AnggotaMenu(penelitianManage *types.TriDarma) {
 	var pilih int
 	loop := true
 	for loop {
+		_, user := services.GetTridarById(penelitianManage.Id)
+		*penelitianManage = user
 		MenuTemplate(&pilih, "Anggota")
 		switch pilih {
 		case 1:
